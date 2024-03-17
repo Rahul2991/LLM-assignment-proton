@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import "./App.css";
+import "./App.css";
 
 export default function App() {
   const [result, setResult] = useState();
@@ -56,14 +56,14 @@ export default function App() {
 
         <br></br>
         <label className="fileLabel" htmlFor="file">
-          Upload CSV file:
+          Upload your file:
         </label>
 
         <input
           type="file"
           id="file"
           name="file"
-          accept=".csv"
+          accept=".csv,.txt,.docx,.pdf"
           onChange={handleFileChange}
           className="fileInput"
         />
