@@ -5,3 +5,4 @@ db
 vectordb
 *.log
 *.db
+exports
