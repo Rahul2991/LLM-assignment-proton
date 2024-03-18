@@ -20,6 +20,7 @@ interface Message {
 }
 
 export default function App() {
+  // console.log(`${process.env.REACT_APP_API_URL}`)
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isBotAnswering, setIsBotAnswering] = useState(false);
@@ -62,22 +63,26 @@ export default function App() {
       method: "POST",
       body: formData,
     })
-    .then((response) => response.json())
+    .then(async response => {
+      console.log(response)
+      if (!response.ok) { 
+        // If the server response was not 2xx, it's an error 
+        const errorData = await response.json(); 
+        console.log(errorData)
+        throw new Error("An unknown error occurred on server side."); 
+      }
+      return response.json();
+    } )
     .then((data) => {
       console.log('this data',data);
-      if (data.result.isError === 'true') {
-        throw new Error('Error occurred while fetching response.');
-      }
-      else{
-        setMessages((msgs) => [...msgs, { type: 'bot', content: data.result.answer }]);
-        setIsBotAnswering(false);
-      }
+      setMessages((msgs) => [...msgs, { type: 'bot', content: data.answer }]);
+      setIsBotAnswering(false);
     })
     .catch(error => {
       console.error("Error:", error);
       toast({
         title: "Fetch response error.",
-        description: error,
+        description: error.message,
         status: "error",
         duration: 9000,
         isClosable: true,

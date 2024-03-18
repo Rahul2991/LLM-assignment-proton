@@ -11,6 +11,8 @@ class DBHandler:
             self.db=self.client[os.getenv('MONGO_DB_NAME')]
             self.collection_name = 'files'
             self.files_collection = self.db[self.collection_name]
+            _, isError = self.initial_check()
+            if isError: raise Exception('Ping to MongoDB Failed.')
         except Exception as ex:
             print(f'Error for setuping up DB config: {str(ex)}. Make sure .env is setup properly.')
             logging.critical(f'Error for setuping up DB config: {str(ex)}. Make sure .env is setup properly.')

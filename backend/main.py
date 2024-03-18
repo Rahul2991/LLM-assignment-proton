@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Any
@@ -35,9 +35,6 @@ app.add_middleware(
 @app.post("/predict", response_model = Response)
 async def predict(question: str = Form(...), file: UploadFile = File(...)) -> Any:
     try:
-        status, isError = dbhandler.initial_check()
-        if isError: raise Exception(status)
-        # raise Exception('Testing')
         answer=''
         logging.info(f"Question received: {question}")
         
@@ -81,8 +78,8 @@ async def predict(question: str = Form(...), file: UploadFile = File(...)) -> An
         
         dbhandler.insert_one(file_metadata)   
         
-        return {"result": {"answer": answer, "isError": "false"}}
+        return {"result": answer}
     except Exception as ex:
         _, _, line = sys.exc_info()
         logging.error(f'Error in predict: {str(ex)}. Line No.{line.tb_lineno}')
-        return {"result": {"answer": str(ex), "isError": "true"}}
+        raise HTTPException(status_code=500, detail=str(ex))
