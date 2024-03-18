@@ -66,7 +66,6 @@ export default function App() {
     .then(async response => {
       console.log(response)
       if (!response.ok) { 
-        // If the server response was not 2xx, it's an error 
         const errorData = await response.json(); 
         console.log(errorData)
         throw new Error("An unknown error occurred on server side."); 
@@ -75,7 +74,7 @@ export default function App() {
     } )
     .then((data) => {
       console.log('this data',data);
-      setMessages((msgs) => [...msgs, { type: 'bot', content: data.answer }]);
+      setMessages((msgs) => [...msgs, { type: 'bot', content: data.result }]);
       setIsBotAnswering(false);
     })
     .catch(error => {
