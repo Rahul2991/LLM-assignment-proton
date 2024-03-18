@@ -75,7 +75,7 @@ export default function App() {
     } )
     .then((data) => {
       console.log('this data',data);
-      setMessages((msgs) => [...msgs, { type: 'bot', content: data.answer }]);
+      setMessages((msgs) => [...msgs, { type: 'bot', content: data.result }]);
       setIsBotAnswering(false);
     })
     .catch(error => {
