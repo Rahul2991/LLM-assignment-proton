@@ -58,28 +58,31 @@ export default function App() {
     formData.append('question', input.trim());
     setInput('');
 
-    fetch("http://127.0.0.1:8000/predict", {
+    fetch(`${process.env.REACT_APP_API_URL}/predict`, {
       method: "POST",
       body: formData,
     })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
-      setMessages((msgs) => [...msgs, { type: 'bot', content: data.result }]);
-      setIsBotAnswering(false);
-      // Handle response data
+      console.log('this data',data);
+      if (data.result.isError === 'true') {
+        throw new Error('Error occurred while fetching response.');
+      }
+      else{
+        setMessages((msgs) => [...msgs, { type: 'bot', content: data.result.answer }]);
+        setIsBotAnswering(false);
+      }
     })
     .catch(error => {
       console.error("Error:", error);
       toast({
-        title: "File upload error.",
-        description: "Error:" + error,
+        title: "Fetch response error.",
+        description: error,
         status: "error",
         duration: 9000,
         isClosable: true,
       });
       setIsBotAnswering(false);
-      // Handle error
     });
   };
 
@@ -99,7 +102,7 @@ export default function App() {
     if (file) {
       if (!supportedTypes.includes(file.type)) {
         toast({
-          title: "File upload error.",
+          title: "File selection error.",
           description: "Unsupported file type. Supported types are .csv, .pdf, .txt, and .docx.",
           status: "error",
           duration: 9000,
@@ -110,7 +113,7 @@ export default function App() {
 
       if (file.size > maxFileSize) {
         toast({
-          title: "File upload error.",
+          title: "File selection error.",
           description: 'File size exceeds 100 MB limit.',
           status: "error",
           duration: 9000,
@@ -120,7 +123,6 @@ export default function App() {
       }
 
       console.log(`Selected File: ${file.name}`);
-      // await new Promise((resolve) => setTimeout(resolve, 2000));
       toast({
         title: "File Selected.",
         description: file.name + " has been selected for upload.",

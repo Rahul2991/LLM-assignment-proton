@@ -16,8 +16,10 @@ class DBHandler:
         try:
             self.client.admin.command('ping')
             logging.info("Pinged your deployment. You successfully connected to MongoDB!")
+            return 'OK', False
         except Exception as e:
             logging.error(e)
+            return str(e), True
             
     def insert_one(self, data):
         try:
